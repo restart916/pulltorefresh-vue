@@ -61,6 +61,7 @@ export default {
       this.$emit('scroll', e);
     },
     touchStart(ev) {
+      // console.log('touchStart');
       let self = this;
       let touch = ev.touches[0];
       let scrollObj = self.scrollObj;
@@ -84,7 +85,7 @@ export default {
       let offsetY, touch;
       touch = ev.touches[0];
       offsetY = (touch.screenY - self.startY) / 2;
-      console.log('pulldown', self.down, offsetY, len);
+      // console.log('pulldown', self.down, offsetY, len);
       if (self.down && self.startPageY == 0 && offsetY > 0) {
         ev.preventDefault();
         if (offsetY > len) {
@@ -114,7 +115,7 @@ export default {
         // console.log('loadData');
         self.addNew().then(function() {
           self.pullDownEl.style.webkitTransitionDuration = '0.5s';
-          self.pullDownEl.style.height = 0;
+          // self.pullDownEl.style.height = 0;
           self.pullDownCls = 'pullDown ok';
           self.pullDownState = self.lableDown.complete;
         });
@@ -129,15 +130,15 @@ export default {
         }
       } else if (self.down) {
         self.pullDownEl.style.webkitTransitionDuration = '0.5s';
-        self.pullDownEl.style.height = 0;
+        // self.pullDownEl.style.height = 0;
       }
       self.pullFlag = 0;
     },
   },
 
   mounted() {
-    this.lableUp = Object.assign(this.lableUp, defaultLableUp);
-    this.lableDown = Object.assign(this.lableDown, defaultLableDown);
+    this.lableUp = Object.assign(defaultLableUp, this.lableUp);
+    this.lableDown = Object.assign(defaultLableDown, this.lableDown);
 
     this.pullDownState = this.lableDown.initial;
     this.pullUpState = this.lableUp.initial;

@@ -64,12 +64,14 @@
 .pullDown,
 .pullUp {
     /* margin-top: 2px; */
-    height: 0;
-    overflow: hidden;
+    /* height: 0; */
+    height: 82px;
+    /* overflow: hidden; */
 }
 
+
 .pullUp {
-    height: 52px;
+    height: 82px;
     /* margin-top: 10px; */
 }
 
@@ -94,7 +96,7 @@
     background: url("up.png") no-repeat 0 0;
     background-size: 26px auto;
     width: 26px;
-    margin: 2px auto 0;
+    margin: 30px auto 0;
 }
 
 .flip .icon {
