@@ -19,13 +19,13 @@ const scrollCls = 'scroll',
   pullDownLabelCls = 'pullDownLabel',
   pullUpCls = 'pullUp',
   pullUpLabelCls = 'pullUpLabel';
-const lableUp = {
+const defaultLableUp = {
   initial: '上拉加载更多',
   suspend: '松开加载更多',
   loading: '加载中',
   complete: '加载完成',
 };
-const lableDown = {
+const defaultLableDown = {
   initial: '下拉刷新',
   suspend: '松开刷新',
   loading: '刷新中',
@@ -41,12 +41,14 @@ export default {
     'addNew',
     'addMore',
     'hasMore',
+    'lableUp',
+    'lableDown'
   ],
   data() {
     return {
       msg: 'PullToRefresh',
-      pullDownState: lableDown.initial,
-      pullUpState: lableUp.initial,
+      pullDownState: '',
+      pullUpState: '',
       pullDownCls,
       pullDownLabelCls,
       pullUpCls,
@@ -66,7 +68,7 @@ export default {
       if (self.down) {
         this.pullDownEl.style.webkitTransitionDuration = '0s';
         this.pullDownCls = pullDownCls;
-        this.pullDownState = lableDown.initial;
+        this.pullDownState = self.lableDown.initial;
       }
       if (self.up && this.pullUpEl) {
         this.pullUpEl.style.webkitTransitionDuration = '0s';
@@ -87,7 +89,7 @@ export default {
         ev.preventDefault();
         if (offsetY > len) {
           offsetY = len;
-          self.pullDownState = lableDown.suspend;
+          self.pullDownState = self.lableDown.suspend;
           self.pullDownCls = 'pullDown flip';
           self.pullFlag = 1;
         }
@@ -100,7 +102,7 @@ export default {
         ev.preventDefault();
         self.pullFlag = 2;
         self.pullUpCls = 'pullUp flip';
-        self.pullUpState = lableUp.suspend;
+        self.pullUpState = self.lableUp.suspend;
       }
     },
     touchEnd(ev) {
@@ -108,21 +110,21 @@ export default {
 
       if (self.down && self.pullFlag == 1) {
         self.pullDownCls = 'pullDown loading';
-        self.pullDownState = lableDown.loading;
+        self.pullDownState = self.lableDown.loading;
         // console.log('loadData');
         self.addNew().then(function() {
           self.pullDownEl.style.webkitTransitionDuration = '0.5s';
           self.pullDownEl.style.height = 0;
           self.pullDownCls = 'pullDown ok';
-          self.pullDownState = lableDown.complete;
+          self.pullDownState = self.lableDown.complete;
         });
       } else if (self.up && self.pullFlag == 2) {
         self.pullUpCls = 'pullUp loading';
-        self.pullUpState = lableUp.loading;
+        self.pullUpState = self.lableUp.loading;
         if (self.hasMore) {
           self.addMore().then(function() {
             self.pullUpCls = 'pullUp';
-            self.pullUpState = lableUp.initial;
+            self.pullUpState = self.lableUp.initial;
           });
         }
       } else if (self.down) {
@@ -134,6 +136,12 @@ export default {
   },
 
   mounted() {
+    this.lableUp = Object.assign(this.lableUp, defaultLableUp);
+    this.lableDown = Object.assign(this.lableDown, defaultLableDown);
+
+    this.pullDownState = this.lableDown.initial;
+    this.pullUpState = this.lableUp.initial;
+
     this.scrollObj = this.$refs.wrap;
     this.pullDownEl = this.$refs.pullDownEl;
 

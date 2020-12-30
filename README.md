@@ -1,4 +1,4 @@
-# pulltorefresh-vue 版本
+# pulltorefresh-vue
 
 > pull to refresh for Vue.js
 
@@ -12,7 +12,7 @@
 
 ## npm
 ``` bash
-npm install pullToRefresh-vue
+npm install pulltorefresh-vue
 ```
 ## parameters
 ```
