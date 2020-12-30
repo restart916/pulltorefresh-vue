@@ -41,8 +41,8 @@ export default {
     'addNew',
     'addMore',
     'hasMore',
-    'lableUp',
-    'lableDown'
+    'propsLableUp',
+    'propsLableDown'
   ],
   data() {
     return {
@@ -53,6 +53,8 @@ export default {
       pullDownLabelCls,
       pullUpCls,
       pullUpLabelCls,
+      lableUp: {},
+      lableDown: {},
     };
   },
   components: {},
@@ -61,84 +63,80 @@ export default {
       this.$emit('scroll', e);
     },
     touchStart(ev) {
-      // console.log('touchStart');
-      let self = this;
+      console.log('touchStart');
       let touch = ev.touches[0];
-      let scrollObj = self.scrollObj;
-      self.pullFlag = 0;
-      if (self.down) {
+      let scrollObj = this.scrollObj;
+      this.pullFlag = 0;
+      if (this.down) {
         this.pullDownEl.style.webkitTransitionDuration = '0s';
         this.pullDownCls = pullDownCls;
-        this.pullDownState = self.lableDown.initial;
+        this.pullDownState = this.lableDown.initial;
       }
-      if (self.up && this.pullUpEl) {
+      if (this.up && this.pullUpEl) {
         this.pullUpEl.style.webkitTransitionDuration = '0s';
       }
-      self.startY = touch.screenY;
-      self.startPageY = scrollObj.scrollTop;
-      self.maxY = scrollObj.scrollHeight - scrollObj.clientHeight;
+      this.startY = touch.screenY;
+      this.startPageY = scrollObj.scrollTop;
+      this.maxY = scrollObj.scrollHeight - scrollObj.clientHeight;
     },
     touchMove(ev) {
-      let self = this,
-        len = this.pulldownOffset || 80,
+      let len = this.pulldownOffset || 80,
         offsetDefault = this.pullupOffset || 20;
       let offsetY, touch;
       touch = ev.touches[0];
-      offsetY = (touch.screenY - self.startY) / 2;
-      // console.log('pulldown', self.down, offsetY, len);
-      if (self.down && self.startPageY == 0 && offsetY > 0) {
-        ev.preventDefault();
+      offsetY = (touch.screenY - this.startY) / 2;
+      // console.log('pulldown', this.down, offsetY, len);
+      if (this.down && this.startPageY == 0 && offsetY > 0) {
+        // ev.preventDefault();
         if (offsetY > len) {
           offsetY = len;
-          self.pullDownState = self.lableDown.suspend;
-          self.pullDownCls = 'pullDown flip';
-          self.pullFlag = 1;
+          this.pullDownState = this.lableDown.suspend;
+          this.pullDownCls = 'pullDown flip';
+          this.pullFlag = 1;
         }
-        self.pullDownEl.style.height = offsetY + 'px';
+        this.pullDownEl.style.height = offsetY + 'px';
       } else if (
-        self.up &&
-        self.startPageY >= self.maxY - offsetDefault &&
+        this.up &&
+        this.startPageY >= this.maxY - offsetDefault &&
         offsetY < 0
       ) {
-        ev.preventDefault();
-        self.pullFlag = 2;
-        self.pullUpCls = 'pullUp flip';
-        self.pullUpState = self.lableUp.suspend;
+        // ev.preventDefault();
+        this.pullFlag = 2;
+        this.pullUpCls = 'pullUp flip';
+        this.pullUpState = this.lableUp.suspend;
       }
     },
     touchEnd(ev) {
-      let self = this;
-
-      if (self.down && self.pullFlag == 1) {
-        self.pullDownCls = 'pullDown loading';
-        self.pullDownState = self.lableDown.loading;
+      if (this.down && this.pullFlag == 1) {
+        this.pullDownCls = 'pullDown loading';
+        this.pullDownState = this.lableDown.loading;
         // console.log('loadData');
-        self.addNew().then(function() {
-          self.pullDownEl.style.webkitTransitionDuration = '0.5s';
-          // self.pullDownEl.style.height = 0;
-          self.pullDownCls = 'pullDown ok';
-          self.pullDownState = self.lableDown.complete;
+        this.addNew().then(() => {
+          this.pullDownEl.style.webkitTransitionDuration = '0.5s';
+          // this.pullDownEl.style.height = 0;
+          this.pullDownCls = 'pullDown ok';
+          this.pullDownState = this.lableDown.complete;
         });
-      } else if (self.up && self.pullFlag == 2) {
-        self.pullUpCls = 'pullUp loading';
-        self.pullUpState = self.lableUp.loading;
-        if (self.hasMore) {
-          self.addMore().then(function() {
-            self.pullUpCls = 'pullUp';
-            self.pullUpState = self.lableUp.initial;
+      } else if (this.up && this.pullFlag == 2) {
+        this.pullUpCls = 'pullUp loading';
+        this.pullUpState = this.lableUp.loading;
+        if (this.hasMore) {
+          this.addMore().then(() => {
+            this.pullUpCls = 'pullUp';
+            this.pullUpState = this.lableUp.initial;
           });
         }
-      } else if (self.down) {
-        self.pullDownEl.style.webkitTransitionDuration = '0.5s';
-        // self.pullDownEl.style.height = 0;
+      } else if (this.down) {
+        this.pullDownEl.style.webkitTransitionDuration = '0.5s';
+        // this.pullDownEl.style.height = 0;
       }
-      self.pullFlag = 0;
+      this.pullFlag = 0;
     },
   },
 
   mounted() {
-    this.lableUp = Object.assign(defaultLableUp, this.lableUp);
-    this.lableDown = Object.assign(defaultLableDown, this.lableDown);
+    this.lableUp = Object.assign(defaultLableUp, this.propsLableUp);
+    this.lableDown = Object.assign(defaultLableDown, this.propsLableDown);
 
     this.pullDownState = this.lableDown.initial;
     this.pullUpState = this.lableUp.initial;
@@ -148,9 +146,9 @@ export default {
 
     this.pullUpEl = this.$refs.pullUpEl;
 
-    this.scrollObj.addEventListener('touchstart', this.touchStart.bind(this));
-    this.scrollObj.addEventListener('touchmove', this.touchMove.bind(this));
-    this.scrollObj.addEventListener('touchend', this.touchEnd.bind(this));
+    this.scrollObj.addEventListener('touchstart', this.touchStart.bind(this), {passive: false});
+    this.scrollObj.addEventListener('touchmove', this.touchMove.bind(this)), {passive: false};
+    this.scrollObj.addEventListener('touchend', this.touchEnd.bind(this)), {passive: false};
   },
 };
 </script>
