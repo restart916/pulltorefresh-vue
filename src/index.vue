@@ -1,12 +1,12 @@
 
 <template>
     <div class="wrap-pull" ref="wrap" @scroll="scrollEvent">
-            <div :class="pullDownCls" ref="pullDownEl">
+            <div :class="pullDownCls" ref="pullDownEl" v-show="showButton">
                 <span class="icon"></span>
                 <span :class="pullDownLabelCls">{{pullDownState}}</span>
             </div>
             <slot></slot>
-            <div :class="pullUpCls" ref="pullUpEl" v-if="hasMore">
+            <div :class="pullUpCls" ref="pullUpEl" v-show="_showButton">
                 <span class="icon"></span>
                 <span :class="pullUpLabelCls">{{pullUpState}}</span>
             </div>
@@ -40,7 +40,6 @@ export default {
     'pulldownOffset',
     'addNew',
     'addMore',
-    'hasMore',
     'propsLableUp',
     'propsLableDown'
   ],
@@ -55,6 +54,7 @@ export default {
       pullUpLabelCls,
       lableUp: {},
       lableDown: {},
+      _showButton: true,
     };
   },
   components: {},
@@ -120,17 +120,22 @@ export default {
       } else if (this.up && this.pullFlag == 2) {
         this.pullUpCls = 'pullUp loading';
         this.pullUpState = this.lableUp.loading;
-        if (this.hasMore) {
-          this.addMore().then(() => {
-            this.pullUpCls = 'pullUp';
-            this.pullUpState = this.lableUp.initial;
-          });
-        }
+
+        this.addMore().then(() => {
+          this.pullUpCls = 'pullUp';
+          this.pullUpState = this.lableUp.initial;
+        });
       } else if (this.down) {
         this.pullDownEl.style.webkitTransitionDuration = '0.5s';
         // this.pullDownEl.style.height = 0;
       }
       this.pullFlag = 0;
+    },
+    showButton() {
+      this._showButton = true
+    },
+    hideButton() {
+      this._showButton = false
     },
   },
 
