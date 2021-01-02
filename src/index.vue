@@ -1,12 +1,12 @@
 
 <template>
     <div class="wrap-pull" ref="wrap" @scroll="scrollEvent">
-            <div :class="pullDownCls" ref="pullDownEl" v-show="showButton">
+            <div :class="pullDownCls" ref="pullDownEl" v-show="isShow">
                 <span class="icon"></span>
                 <span :class="pullDownLabelCls">{{pullDownState}}</span>
             </div>
             <slot></slot>
-            <div :class="pullUpCls" ref="pullUpEl" v-show="_showButton">
+            <div :class="pullUpCls" ref="pullUpEl" v-show="isShow">
                 <span class="icon"></span>
                 <span :class="pullUpLabelCls">{{pullUpState}}</span>
             </div>
@@ -54,7 +54,7 @@ export default {
       pullUpLabelCls,
       lableUp: {},
       lableDown: {},
-      _showButton: true,
+      isShow: true,
     };
   },
   components: {},
@@ -131,11 +131,11 @@ export default {
       }
       this.pullFlag = 0;
     },
-    showButton() {
-      this._showButton = true
+    show() {
+      this.isShow = true
     },
-    hideButton() {
-      this._showButton = false
+    hide() {
+      this.isShow = false
     },
   },
 
